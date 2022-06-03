@@ -20,6 +20,7 @@ remote_base_path=/base/to/copy/to
 
 # create ssh-socket for faster execution
 socket=~/.ssh/sshSocket
+ssh -M -S $socket $remote_host exit
 
 remote_file_hashes=$(mktemp)
 file_hash_changes=$(mktemp)
