@@ -9,7 +9,7 @@ remote_host=user@remote-ssh-server
 remote_base_path=/path/from/root
 
 # create ssh-socket for faster execution
-socket=~/.ssh/netcupSocket
+socket=~/.ssh/syncTimeBasedSocket
 ssh -M -S $socket $remote_host exit
 
 files_changed=$(mktemp)
