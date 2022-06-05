@@ -31,7 +31,7 @@ find . -type f $sync_switch_for_find ! -path "./$last_sync_date" ! -path "./$0*"
 echo "Found:"
 cat $files_changed
 
-<$files_changed xargs -r -i scp -o ControlPath=$socket -C {} $remote_host:$remote_base_path/{}
+<$files_changed xargs -r -i scp -o ControlPath=$socket -C '{}' $remote_host:\"$remote_base_path/{}\"
 
 ssh -S $socket -O exit $remote_host
 
