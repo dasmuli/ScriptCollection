@@ -58,7 +58,7 @@ else
 
   # copy files
   echo "Adding: "
-  <$files_changed xargs -r -i scp -o ControlPath=$socket -C {} $remote_host:$remote_base_path/{}
+  <$files_changed xargs -r -i scp -o ControlPath=$socket -C \"{}\" \"$remote_host:$remote_base_path/{}\"
 
   # copy hash file for folder
   scp -o "ControlPath=$socket" $file_hashes "$remote_host:$remote_base_path/$file_hashes"
