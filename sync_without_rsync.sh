@@ -29,7 +29,7 @@ file_hashes=.file_hashes.lst
 
 if [ "$1" = "fixremote" ]; then
   echo "Rebuilding remote file hash"
-  ssh -S $socket $remote_host cd $remote_base_path; find . -type f ! -path "./$0*" ! -path "./.file_hashes.lst" -exec sha256sum {} \; | ssh -S $socket $remote_host "cat > $remote_base_path/$file_hashes"
+  ssh -S $socket $remote_host "cd $remote_base_path; find . -type f ! -path \"./$0*\" ! -path \"./.file_hashes.lst\" -exec sha256sum {} \;" | sort | ssh -S $socket $remote_host "cat > $remote_base_path/$file_hashes"
   exit
 fi
 
@@ -44,17 +44,17 @@ if [ $? -eq 0 ]; then
 else
   # Remove files missing locally
   truncate -s 0 $files_changed
-  cat $file_hash_changes | egrep ^\< | cut -d " " -f 4 > $files_changed
+  cat $file_hash_changes | egrep ^\< | cut -c -67 --complement > $files_changed
   echo "Will delete remotely: "
   xargs echo <$files_changed
   <$files_changed xargs -r -i ssh -S $socket $remote_host rm -f $remote_base_path/{}
   
   # Add files added or changed local
   truncate -s 0 $files_changed
-  cat $file_hash_changes | egrep ^\> | cut -d " " -f 4 > $files_changed
+  cat $file_hash_changes | egrep ^\> | cut -c -67 --complement > $files_changed
 
   # create folder remote just to be sure
-  cat $files_changed | xargs -r dirname | sort | uniq | xargs -i ssh -S $socket $remote_host mkdir -p $remote_base_path/{}
+  cat $files_changed | xargs -r dirname | sort | uniq | xargs -i ssh -S $socket $remote_host mkdir -p $remote_base_path/"{}"
 
   # copy files
   echo "Adding: "
